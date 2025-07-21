@@ -1,33 +1,56 @@
 package baseballgame;
 
 import java.util.Arrays;
+import java.util.Scanner;
 
 public class GameMain {
-    public static void main(String[] args) {
-        CheckNumber checkNumber = new CheckNumber(makeNumber()); //정답을 checkNumber로 보냄
-        InputNumber inputNumber = new InputNumber();
+    private static final Scanner sc = new Scanner(System.in);
 
+    public static void main(String[] args) {
+        System.out.println("Welcome to the game!");
+
+        boolean playAgein = true;
+        while (playAgein) {
+            playGame();
+            playAgein = askForRestart();
+        }
+    }
+
+    private static boolean askForRestart() {
+        while (true) {
+            System.out.println("Do you want to play again? (1 -> reStart or 2 -> End)");
+            try {
+                int choice = Integer.parseInt(sc.nextLine());
+                if (choice == 1) {
+                    return true;
+                } else if (choice == 2) {
+                    return false;
+                } else {
+                    throw new IllegalArgumentException("Invalid choice.");
+                }
+            } catch (IllegalArgumentException e) {
+                System.out.println("Invalid choice. choose 1 or 2.");
+            }
+        }
+    }
+
+    private static void playGame() {
+        MakeNumber makeNumber = new MakeNumber();
+        makeNumber.makeAnswerNumber();
+        InputNumber inputNumber = new InputNumber();
+        CheckNumber checkNumber = new CheckNumber(makeNumber.getNumber());
+
+        System.out.println("Debug - Answer: " + Arrays.toString(makeNumber.getNumber()));
         do {
             inputNumber.inputNumber();  //사용자 값 입력 && 유효성검사
         } while (!checkGameEnd(checkNumber, inputNumber));
     }
 
     private static boolean checkGameEnd(CheckNumber checkNumber, InputNumber inputNumber) {
-        if(checkNumber.matchNumber(inputNumber.getNumber())) {
+        if (checkNumber.matchNumber(inputNumber.getNumber())) {
             System.out.println("Game End");
-            /**
-             * 종료 후 1을 입력하면 게임을 재시작 2를 입력하면 프로그램 종료 만들어야함.
-             */
             return true;
         }
         return false;
-    }
-
-    public static int[] makeNumber() {
-        MakeNumber makeNumber = new MakeNumber();
-        makeNumber.makeAnswerNumber();
-        int[] answer = makeNumber.getNumber();
-        System.out.println("Deburr : " + Arrays.toString(answer) + "\n");
-        return answer;
     }
 }
