@@ -1,5 +1,9 @@
 package baseballgame2;
 
+/**
+ * Score는 Referee의 판정 결과를 담는 객체
+ * strike, ball 를 저장하고 관련 기능 제공
+ */
 public class Score {
     private final GameSetting setting;
     private int strike;

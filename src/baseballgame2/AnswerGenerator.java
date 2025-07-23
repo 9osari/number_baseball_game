@@ -23,7 +23,7 @@ public class AnswerGenerator {
         Set<Integer> elements = new HashSet<>();
         Random random = new Random();
         while (setting.getAnswerLength() > elements.size()) {
-            int num = random.nextInt(9) + 1;
+            int num = random.nextInt(setting.getMaxNumber()) + 1;
             elements.add(num);
         }
         return new ArrayList<>(elements);

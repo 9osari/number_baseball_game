@@ -4,6 +4,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
+/**
+ * 플레이어는 3자리 숫자 입력가능
+ * 중복된 수 입력불가
+ * 범위는 1~9
+ * 잘못된 값 입력 -> IllegalArgumentException
+ */
 public class Player {
     private final GameSetting setting;
 

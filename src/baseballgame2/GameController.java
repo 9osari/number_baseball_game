@@ -5,6 +5,7 @@ import java.util.Scanner;
 
 /**
  * GameController는 게임의 흐름만 책임.
+ * 게임을 시작, 재시작 묻기 등
  */
 public class GameController implements Game {
     Scanner sc = new Scanner(System.in);

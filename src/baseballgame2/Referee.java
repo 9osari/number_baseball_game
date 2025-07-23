@@ -3,6 +3,11 @@ package baseballgame2;
 import java.util.List;
 import java.util.Objects;
 
+/**
+ * Referee는 값을 비교하는 역할
+ * answer(문제) 와 playerInput(입력값)을 가져와 값을 비교 해
+ * 결과를 Score로 반환
+ */
 public class Referee {
     private final GameSetting setting;
 
