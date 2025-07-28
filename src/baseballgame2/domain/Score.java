@@ -1,15 +1,17 @@
-package baseballgame2;
+package baseballgame2.domain;
+
+import baseballgame2.config.GameSetting;
 
 /**
- * Score는 Referee의 판정 결과를 담는 객체
+ * Score<T>는 Referee의 판정 결과를 담는 객체
  * strike, ball 를 저장하고 관련 기능 제공
  */
-public class Score {
-    private final GameSetting setting;
+public class Score<T> {
+    private final GameSetting<T> setting;
     private int strike;
     private int ball;
 
-    public Score(int strike, int ball, GameSetting setting) {
+    public Score(int strike, int ball, GameSetting<T> setting) {
         this.strike = strike;
         this.ball = ball;
         this.setting = setting;

@@ -189,8 +189,6 @@
 
 한 객체가 많은 책임을 가지진 않는지
 
-<br>
-
 ## 피드백 받은 후
 
 1. 메세지 설계
@@ -202,9 +200,8 @@
 [눈으로 보는 OOP](https://www.notion.so/6bd16f7647554dd1bcca0001da50b617?pvs=21) ← 10번 읽기
 
 ---
-<br>
 
-## 피드백 받은 후 2.0 구현 (2025-07-22)
+## 피드백 받은 후 2.0 구현
 
 - 설계 시작
     
@@ -261,8 +258,7 @@
     - strike, Ball, Noting 관리? → `Score`
         
         점수 즉 스트라이크, 볼 따로 관리하면 좋나?
-
-<br>
+        
 
 각 객체의 이름은 그 책임을 도메인 모델 안에서 잘 표현해야 한다.
 
@@ -270,57 +266,17 @@
 
 이제 협력에 필요한 메세지를 작성해보자..
 
-<br>
-
 - 메세지 설계
     
     ```mermaid
     classDiagram
     
-    class GameMain {
-      +main(String[]): void
-    }
-    
-    class GameController {
-      -player: Player
-      -referee: Referee
-      -generator: AnswerGenerator
-      +start(): void
-    }
-    
-    class GameSetting {
+    %% 인터페이스
+    class GameSetting~T~ {
       <<interface>>
       +getAnswerLength(): int
       +getMaxNumber(): int
-    }
-    
-    class BaseballGameSetting {
-      +getAnswerLength(): int
-      +getMaxNumber(): int
-    }
-    
-    class Player {
-      -setting: GameSetting
-      +input(): List<Integer>
-    }
-    
-    class AnswerGenerator {
-      -setting: GameSetting
-      +generate(): List<Integer>
-    }
-    
-    class Referee {
-      -setting: GameSetting
-      +judge(List<Integer>, List<Integer>): Score
-    }
-    
-    class Score {
-      -strike: int
-      -ball: int
-      -setting: GameSetting
-      +addStrike(): void
-      +addBall(): void
-      +toString(): String
+      +isValidElement(T): boolean
     }
     
     class Game {
@@ -328,17 +284,193 @@
       +start(): void
     }
     
-    GameMain --> GameController : 게임 시작 지점 → 컨트롤러로 흐름 전달
-    GameController --> AnswerGenerator : 정답 생성
-    GameController --> Player : 사용자 입력
-    GameController --> Referee : 입력값과 정답 비교 및 판정
-    GameController ..|> Game : Game 인터페이스 구현
+    %% 구현체
+    class BaseBallGameSetting {
+      +getAnswerLength(): int
+      +getMaxNumber(): int
+      +isValidElement(Integer): boolean
+    }
     
-    BaseballGameSetting ..|> GameSetting : 설정 인터페이스 구현
-    Player --> GameSetting : 정답 길이 설정 참조
-    Referee --> GameSetting : 정답 길이 설정 참조
-    AnswerGenerator --> GameSetting : 정답 길이 설정 참조
-    Score --> GameSetting : 정답 길이 설정 참조
-    Referee --> Score : 판단 결과 반환
+    class AlphabetGameSetting {
+      +getAnswerLength(): int
+      +getMaxNumber(): int
+      +isValidElement(Character): boolean
+    }
     
+    %% 도메인 로직
+    class AnswerGenerator~T~ {
+      -setting: GameSetting~T~
+      -randomElement: Supplier~T~
+      +generate(): List~T~
+    }
+    
+    class Player~T~ {
+      -setting: GameSetting~T~
+      -parser: Function~String, T~
+      +input(): List~T~
+    }
+    
+    class Referee~T~ {
+      -setting: GameSetting~T~
+      +judge(answer: List~T~, input: List~T~): Score~T~
+    }
+    
+    class Score~T~ {
+      -strike: int
+      -ball: int
+      -setting: GameSetting~T~
+      +addStrike(): void
+      +addBall(): void
+      +isThreeStrike(): boolean
+      +toString(): String
+    }
+    
+    %% 실행 흐름
+    class GameController~T~ {
+      -player: Player~T~
+      -referee: Referee~T~
+      -generator: AnswerGenerator~T~
+      +start(): void
+    }
+    
+    class GameConfig~T~ {
+      -setting: GameSetting~T~
+      -generator: AnswerGenerator~T~
+      -player: Player~T~
+      -referee: Referee~T~
+      -game: GameController~T~
+      +getGame(): Game
+    }
+    
+    class GameMain~T~ {
+      -setting: GameSetting~T~
+      -supplier: Supplier~T~
+      -parser: Function~String, T~
+      +start(): void
+    }
+    
+    %% 관계 (타입 표기 없이 안정적으로 연결)
+    GameMain --> GameConfig : 실행 시 조립
+    GameConfig --> GameController
+    GameController --> Player
+    GameController --> Referee
+    GameController --> AnswerGenerator
+    GameController ..|> Game
+    
+    BaseBallGameSetting ..|> GameSetting
+    AlphabetGameSetting ..|> GameSetting
+    
+    AnswerGenerator --> GameSetting
+    Player --> GameSetting
+    Referee --> GameSetting
+    Score --> GameSetting
+    Referee --> Score
+    
+    ```
+    
+
+## 제네릭 도입? (2025-07-28)
+
+현재 숫자야구 ← `Integer` 로만 되어있음 나중에 도메인이 잘 나가서 알파벳게임도 추가된다면?
+
+재사용성 증가와 유연한 API를 위해 제네릭을 도입하자..
+
+- 제네릭 도입 후 메세지 설계
+    ```mermaid
+        classDiagram
+        
+        %% 인터페이스
+        class GameSetting~T~ {
+          <<interface>>
+          +getAnswerLength(): int
+          +getMaxNumber(): int
+          +isValidElement(T): boolean
+        }
+        
+        class Game {
+          <<interface>>
+          +start(): void
+        }
+        
+        %% 구현체
+        class BaseBallGameSetting {
+          +getAnswerLength(): int
+          +getMaxNumber(): int
+          +isValidElement(Integer): boolean
+        }
+        
+        class AlphabetGameSetting {
+          +getAnswerLength(): int
+          +getMaxNumber(): int
+          +isValidElement(Character): boolean
+        }
+        
+        %% 도메인 로직
+        class AnswerGenerator~T~ {
+          -setting: GameSetting~T~
+          -randomElement: Supplier~T~
+          +generate(): List~T~
+        }
+        
+        class Player~T~ {
+          -setting: GameSetting~T~
+          -parser: Function~String, T~
+          +input(): List~T~
+        }
+        
+        class Referee~T~ {
+          -setting: GameSetting~T~
+          +judge(answer: List~T~, input: List~T~): Score~T~
+        }
+        
+        class Score~T~ {
+          -strike: int
+          -ball: int
+          -setting: GameSetting~T~
+          +addStrike(): void
+          +addBall(): void
+          +isThreeStrike(): boolean
+          +toString(): String
+        }
+        
+        %% 실행 흐름
+        class GameController~T~ {
+          -player: Player~T~
+          -referee: Referee~T~
+          -generator: AnswerGenerator~T~
+          +start(): void
+        }
+        
+        class GameConfig~T~ {
+          -setting: GameSetting~T~
+          -generator: AnswerGenerator~T~
+          -player: Player~T~
+          -referee: Referee~T~
+          -game: GameController~T~
+          +getGame(): Game
+        }
+        
+        class GameMain~T~ {
+          -setting: GameSetting~T~
+          -supplier: Supplier~T~
+          -parser: Function~String, T~
+          +start(): void
+        }
+        
+        %% 관계 (타입 표기 없이 안정적으로 연결)
+        GameMain --> GameConfig : 실행 시 조립
+        GameConfig --> GameController
+        GameController --> Player
+        GameController --> Referee
+        GameController --> AnswerGenerator
+        GameController ..|> Game
+        
+        BaseBallGameSetting ..|> GameSetting
+        AlphabetGameSetting ..|> GameSetting
+        
+        AnswerGenerator --> GameSetting
+        Player --> GameSetting
+        Referee --> GameSetting
+        Score --> GameSetting
+        Referee --> Score
     ```

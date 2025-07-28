@@ -1,4 +1,10 @@
-package baseballgame2;
+package baseballgame2.controller;
+
+import baseballgame2.domain.AnswerGenerator;
+import baseballgame2.Game;
+import baseballgame2.domain.Player;
+import baseballgame2.domain.Referee;
+import baseballgame2.domain.Score;
 
 import java.util.List;
 import java.util.Scanner;
@@ -7,13 +13,13 @@ import java.util.Scanner;
  * GameController는 게임의 흐름만 책임.
  * 게임을 시작, 재시작 묻기 등
  */
-public class GameController implements Game {
+public class GameController<T> implements Game {
     Scanner sc = new Scanner(System.in);
-    private final Player player;
-    private final Referee referee;
-    private final AnswerGenerator answerGenerator;
+    private final Player<T> player;
+    private final Referee<T> referee;
+    private final AnswerGenerator<T> answerGenerator;
 
-    public GameController(Player player, Referee referee, AnswerGenerator answerGenerator) {
+    public GameController(Player<T> player, Referee<T> referee, AnswerGenerator<T> answerGenerator) {
         this.player = player;
         this.referee = referee;
         this.answerGenerator = answerGenerator;
@@ -28,15 +34,15 @@ public class GameController implements Game {
 
     private void play() {
         //정답생성
-        List<Integer> answer = answerGenerator.generate();
+        List<T> answer = answerGenerator.generate();
         System.out.println("디버깅용: " + answer);
         //아웃될때까지 반복
         while(true) {
             //사용자 입력
-            List<Integer> playerInput = player.input();
+            List<T> playerInput = player.input();
 
-            //정답과 입력값 비교
-            Score score = referee.judge(answer, playerInput);
+            //정답과 입력값 비교하여 판정
+            Score<T> score = referee.judge(answer, playerInput);
 
             System.out.println(score);
             if(score.isThreeStrike()) {
