@@ -374,3 +374,15 @@
         Score --> GameSetting
         Referee --> Score
     ```
+<br>
+
+| 파일                                           | 역할 요약                       |
+| -------------------------------------------- | --------------------------- |
+| `GameSetting<T>`                             | 게임 규칙 정의용 인터페이스             |
+| `BaseBallGameSetting`, `AlphabetGameSetting` | 구체적인 게임 규칙 구현               |
+| `GameConfig<T>`                              | 의존성 조립기 (GameController 구성) |
+| `AnswerGenerator<T>`                         | 정답 생성기                      |
+| `Player<T>`                                  | 사용자 입력 처리                   |
+| `Referee<T>`                                 | 정답과 입력 비교 후 판정              |
+| `Score<T>`                                   | 스트라이크/볼 상태 저장 및 출력          |
+| `Game`                                       | 공통 실행 인터페이스                 |
