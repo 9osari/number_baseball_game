@@ -266,7 +266,7 @@
 
 이제 협력에 필요한 메세지를 작성해보자..
 
-- 메세지 설계
+~~- 메세지 설계
     
     ```mermaid
     classDiagram
@@ -366,7 +366,7 @@
     Score --> GameSetting
     Referee --> Score
     
-    ```
+    ```~~
     
 
 ## 제네릭 도입? (2025-07-28)
