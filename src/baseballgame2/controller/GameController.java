@@ -46,7 +46,6 @@ public class GameController<T> implements Game {
 
             System.out.println(score);
             if(score.isThreeStrike()) {
-                System.out.println("3 스트라이크 게임종료");
                 break;
             }
         }

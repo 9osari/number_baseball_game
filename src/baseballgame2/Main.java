@@ -1,6 +1,7 @@
 package baseballgame2;
 
 import baseballgame2.config.GameSetting;
+import baseballgame2.setting.AlphabetGameSetting;
 import baseballgame2.setting.BaseBallGameSetting;
 
 import java.util.function.Function;

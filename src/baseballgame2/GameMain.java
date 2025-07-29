@@ -1,30 +1,34 @@
 package baseballgame2;
 
-import baseballgame2.config.GameConfig;
 import baseballgame2.config.GameSetting;
+import baseballgame2.controller.GameController;
+import baseballgame2.domain.AnswerGenerator;
+import baseballgame2.domain.Player;
+import baseballgame2.domain.Referee;
 
 import java.util.function.Function;
 import java.util.function.Supplier;
 
 /**
- * 게임을 구성하고 시작하는 클래스
- * 문자,숫자 등 게임 모드?를 추상화...
+ * 게임 실행에 필요한 구성 요소들을 조립하고, 게임을 시작하는 책임
+ * GameSetting, AnswerGenerator, Player, Referee를 생성해 GameController에 전달
  */
 public class GameMain<T> {
     private final GameSetting<T> setting;
-    private final Supplier<T> supplier;
-    private final Function<String, T> parser;
+    private final AnswerGenerator<T> generator;
+    private final Player<T> player;
+    private final Referee<T> referee;
+    private final Game game;
 
     public GameMain(GameSetting<T> setting, Supplier<T> supplier, Function<String, T> parser) {
         this.setting = setting;
-        this.supplier = supplier;
-        this.parser = parser;
+        this.generator = new AnswerGenerator<>(setting, supplier);
+        this.player = new Player<>(setting, parser);
+        this.referee = new Referee<>(setting);
+        this.game = new GameController<>(player, referee, generator);
     }
 
     public void start() {
-        new GameConfig<>(setting, supplier, parser)
-                .getGame()
-                .start();
+        game.start();
     }
-
 }

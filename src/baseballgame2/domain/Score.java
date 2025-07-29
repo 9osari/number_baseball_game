@@ -24,6 +24,7 @@ public class Score<T> {
         ball++;
     }
 
+    //판단 메서드
     public boolean isThreeStrike() {
         return strike == setting.getAnswerLength();
     }
@@ -32,6 +33,9 @@ public class Score<T> {
     public String toString() {
         if(strike == 0 && ball == 0) {
             return "Noting";
+        }
+        if(isThreeStrike()) {
+            return strike + " strike";
         }
         return String.format("Strike: %d, Ball: %d", strike, ball);
     }
