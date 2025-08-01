@@ -21,8 +21,8 @@ public class AnswerGenerator<T> {
     }
 
     public List<T> generate() {
-        //증복X HashSet 사용
-        Set<T> elements = new HashSet<>();
+        //Set은 중복을 허용하지 않고, 순서를 보장하지 않는 자료구조
+        Set<T> elements = new HashSet<>(); //특정 순서 없이 저장 O(1) 의 시간 복잡도
         /*Random random = new Random();*/
         while (elements.size() < setting.getAnswerLength()) {
             T element = RandomElement.get(); //무작위 요소 생성

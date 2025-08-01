@@ -34,15 +34,31 @@ public class Player<T> {
                 continue;
             }
 
-            //유효성검사 - 숫자형식 확인
-            //이거 어캐하지ㅋㅋ
-            /*for (int i = 0; i < setting.getAnswerLength(); i++) {
-                char c = num.charAt(i);
-                if (!Character.isDigit(c)) throw new IllegalArgumentException("숫자 형식을 확인");
-            }*/
+            //유효성검사 - 형식 확인
+            List<T> inputList = new ArrayList<>();
+            boolean isValid = true;
+            for (int i = 0; i < num.length(); i++) {
+                try {
+                    T element = parser.apply(String.valueOf(num.charAt(i)));
+                    if(!setting.isValidElement(element)) {
+                        System.out.println("문자 형식만 입력해주세요.");
+                        isValid = false;
+                        break;
+                    }
+                    inputList.add(element);
+                } catch (Exception e) {
+                    System.out.println("숫자 형식만 입력해주세요.");
+                    isValid = false;
+                    break;
+                }
+            }
 
+            if(!isValid) continue;
+
+            //모든 유효성검사 끝난 후
             List<T> list = new ArrayList<>();
             for (int i = 0; i < num.length(); i++) {
+                //사용자 입력 값을 리스트에 담아 반환
                 list.add(parser.apply(String.valueOf(num.charAt(i))));
             }
             return list;

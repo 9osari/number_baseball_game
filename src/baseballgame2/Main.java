@@ -20,9 +20,9 @@ public class Main {
         Function<String, Integer> parser = Integer::parseInt;
 
         //알파벳 맞추기
-        //GameSetting setting = new AlpabetGameSetting();
-        //Supplier<Character> valueGenerator = () -> (char) (Math.random() * 26 + 'a');
-        //Function<String, Character> parser = s -> s.charAt(0);
+//        GameSetting<Character> setting = new AlphabetGameSetting();
+//        Supplier<Character> valueGenerator = () -> (char) (Math.random() * 26 + 'a');
+//        Function<String, Character> parser = s -> s.charAt(0);
 
         GameMain<Integer> gameMain = new GameMain<>(setting, valueGenerator, parser);
         gameMain.start();
